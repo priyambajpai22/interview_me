@@ -12,9 +12,9 @@ import os
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.urls import re_path
-from call import consumers
-from call.route import websocket_urlpatterns
-
+from .route import websocket_urlpatterns
+from django.core.asgi import get_asgi_application
+from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'interview_me.settings')
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
@@ -27,5 +27,6 @@ application = ProtocolTypeRouter(
                websocket_urlpatterns
             )
         ),
+        "http" : get_asgi_application() 
     }
 )

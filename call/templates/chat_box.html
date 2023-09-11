@@ -48,19 +48,10 @@
     </script>
 </body>
 <script>
-   const user_username = JSON.parse(document.getElementById('user_username').textContent);
-   document.querySelector('#submit').onclick = function (e) {
-      const messageInputDom = document.querySelector('#input');
-      const message = messageInputDom.value;
-      chatSocket.send(JSON.stringify({
-          'message': message,
-          'username': user_username,
-      }));
-      messageInputDom.value = '';
-   };
 
-   const boxName = document.getElementById('input').textContent;
-   const chatSocket = new WebSocket(
+
+
+const socket = new WebSocket(
       'ws://' +
       window.location.host +
       '/ws/chat/' +
@@ -68,10 +59,60 @@
       '/'
    );
 
-   chatSocket.onmessage = function (e) {
-      const data = JSON.parse(e.data);
-      document.querySelector('#chat-text').value += (data.message + ' sent by ' + data.username   + '\n') // add message to text box
-   }
+// Event handler when WebSocket connection is established
+socket.onopen = function() {
+  console.log('WebSocket connection established');
+
+  // Capture audio from the user's microphone
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(function(stream) {
+      // Create AudioContext and MediaStreamAudioSourceNode
+      const audioContext = new AudioContext();
+      const audioSourceNode = audioContext.createMediaStreamSource(stream);
+
+      // Create ScriptProcessorNode for audio processing
+      const scriptNode = audioContext.createScriptProcessor(4096, 1, 1);
+      
+      // Event handler for scriptNode onaudioprocess event
+      scriptNode.onaudioprocess = function(event) {
+        // Get the audio data from the input buffer
+        const audioData = event.inputBuffer.getChannelData(0);
+
+        // Send the audio data to the server
+        socket.send(audioData.buffer);
+      };
+
+      // Connect the audioSourceNode to the scriptNode
+      audioSourceNode.connect(scriptNode);
+      
+      // Connect the scriptNode to the AudioContext destination
+      scriptNode.connect(audioContext.destination);
+    })
+    .catch(function(err) {
+      console.log('Error accessing media devices: ', err);
+    });
+};
+
+// Event handler for WebSocket connection error
+socket.onerror = function(error) {
+  console.error('WebSocket error:', error);
+};
+
+// Event handler for WebSocket connection close
+socket.onclose = function() {
+  console.log('WebSocket connection closed');
+};
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 </html>

@@ -1,0 +1,1 @@
+first_gpt_chat="hi talk to me as if you are taking my interview without knowing anything about me,please ask one question at a time and wait for my response"

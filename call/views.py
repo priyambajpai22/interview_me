@@ -19,6 +19,7 @@ from django.core import exceptions
 import random
 from rest_framework import generics
 from rest_framework import viewsets
+from .chatgpt import ChatGptInitailize
 
 
 
@@ -45,6 +46,9 @@ class UserCreateAPIView(generics.CreateAPIView):
 from django.shortcuts import render
 
 def chat_box(request, chat_box_name):
+    #chat_obj=ChatGptInitailize()
+    #chat_obj.initailize_chat()
+	
     # we will get the chatbox name from the url
-    return render(request, "chat_box.html", {"chat_box_name": chat_box_name})
+    return render(request, "call_template/video-call.html", {"chat_box_name": chat_box_name})
 
