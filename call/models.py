@@ -6,6 +6,13 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 
+
+
+
+
+
+
+
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 
@@ -39,6 +46,9 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+    def get_queryset(self):
+        return super().get_queryset().filter(deleted=False)
+
 
 class User(AbstractUser):
     """User model."""
@@ -48,6 +58,7 @@ class User(AbstractUser):
     last_name=None
     name=models.CharField(max_length=30,blank=True)
     email = models.EmailField(('email address'), unique=True)
+    deleted=models.BooleanField(default=False)
     #city=models.CharField(max_length=30, blank=True)
     #profile_pic=models.ImageField(blank=True)
     #phone=models.CharField(max_length=10,blank)
@@ -58,6 +69,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+    admin=BaseUserManager()
 
     def __str__(self):
         return self.email

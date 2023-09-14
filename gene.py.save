@@ -1,0 +1,14 @@
+import pyotp
+
+# Replace 'your_shared_secret_key' with your actual shared secret key
+shared_secret_key = 'bajpaipriyam865@gmail.comHENNGECHALLENGE003'
+import hashlib
+
+
+# Create a TOTP object
+totp = pyotp.TOTP(shared_secret_key,digest=hashlib.sha512,interval=30)
+
+# Generate the 10-digit TOTP password
+password = totp.now()
+
+print(f"Generated TOTP Password: {password}")
